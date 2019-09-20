@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license       = package['license']
   s.author        = package['author']
   s.platform      = :ios, "9.0"
-  s.source        = { :git => "https://github.com/bashen1/react-native-mbaichuan.git", :tag => "master" }
+  s.source        = { :git => "https://github.com/bashen1/react-native-weibo.git", :tag => "master" }
   s.source_files  = "ios/RCTWeiboAPI/**/*.{h,m}", "ios/libWeiboSDK/**/*.{h,m}"
   s.resources     = ['*.bundle', '*.strings']
   s.requires_arc  = true
