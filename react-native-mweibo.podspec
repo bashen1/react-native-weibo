@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.platform      = :ios, "9.0"
   s.source        = { :git => "https://github.com/bashen1/react-native-weibo.git", :tag => "master" }
   s.source_files  = "ios/RCTWeiboAPI/**/*.{h,m}", "ios/libWeiboSDK/**/*.{h,m}"
-  s.resources     = ['*.bundle', '*.strings']
+  s.resource      = "ios/libWeiboSDK/WeiboSDK.bundle"
   s.requires_arc  = true
   s.vendored_libraries = "ios/libWeiboSDK/libWeiboSDK.a"
   
