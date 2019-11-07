@@ -28,6 +28,6 @@ android {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    compile files('libs/weiboSDKCore_3.1.2.jar')
+    implementation 'com.facebook.react:react-native:+'
+    implementation files('libs/weiboSDKCore_3.1.2.jar')
 }
