@@ -9,25 +9,14 @@
 #import "RCTWeiboAPI.h"
 #import "WeiboSDK.h"
 
-#if __has_include(<React/RCTBridge.h>)
-#import <React/RCTBridge.h>
-#import <React/RCTEventDispatcher.h>
 #import <React/RCTImageLoader.h>
-#else
-#import "RCTBridge.h"
-#import "RCTEventDispatcher.h"
-#import "RCTImageLoader.h"
-#endif
 
 #define INVOKE_FAILED (@"WeiBo API invoke returns false.")
 #define RCTWBEventName (@"Weibo_Resp")
 
-
-#define RCTWBShareTypeNews @"news"
 #define RCTWBShareTypeImage @"image"
 #define RCTWBShareTypeText @"text"
 #define RCTWBShareTypeVideo @"video"
-#define RCTWBShareTypeAudio @"audio"
 
 #define RCTWBShareType @"type"
 #define RCTWBShareText @"text"
@@ -45,7 +34,32 @@ BOOL gRegister = NO;
 
 @implementation RCTWeiboAPI
 
-@synthesize bridge = _bridge;
+{
+    bool hasListeners;
+}
+
++(BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
+// Will be called when this module's first listener is added.
+-(void)startObserving {
+    hasListeners = YES;
+    // Set up any upstream listeners or background tasks as necessary
+}
+
+
+// Will be called when this module's last listener is removed, or on dealloc.
+-(void)stopObserving {
+    hasListeners = NO;
+    // Remove upstream listeners, stop unnecessary background tasks
+}
+
+
+- (NSArray<NSString *> *)supportedEvents
+{
+    return @[RCTWBEventName];
+}
 
 RCT_EXPORT_MODULE();
 
@@ -54,15 +68,11 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-+ (BOOL) requiresMainQueueSetup {
-    return YES;
-}
-
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:@"RCTOpenURLNotification" object:nil];
     }
     return self;
@@ -77,7 +87,7 @@ RCT_EXPORT_METHOD(login:(NSDictionary *)config
                   :(RCTResponseSenderBlock)callback)
 {
     [self _autoRegisterAPI];
-
+    
     WBAuthorizeRequest *request = [self _genAuthRequest:config];
     BOOL success = [WeiboSDK sendRequest:request];
     callback(@[success?[NSNull null]:INVOKE_FAILED]);
@@ -92,14 +102,14 @@ RCT_EXPORT_METHOD(shareToWeibo:(NSDictionary *)aData
                   :(RCTResponseSenderBlock)callback)
 {
     [self _autoRegisterAPI];
-
+    
     NSString *imageUrl = aData[RCTWBShareImageUrl];
-    if (imageUrl.length && _bridge.imageLoader) {
+    if (imageUrl.length && self.bridge.imageLoader) {
         CGSize size = CGSizeZero;
         if (![aData[RCTWBShareType] isEqualToString:RCTWBShareTypeImage]) {
             size = CGSizeMake(80,80);
         }
-        [_bridge.imageLoader loadImageWithURLRequest:[RCTConvert NSURLRequest:imageUrl] size:size scale:1 clipped:FALSE resizeMode:UIViewContentModeScaleToFill progressBlock:nil partialLoadBlock: nil completionBlock:^(NSError *error, UIImage *image) {
+        [self.bridge.imageLoader loadImageWithURLRequest:[RCTConvert NSURLRequest:imageUrl] size:size scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil partialLoadBlock: nil completionBlock:^(NSError *error, UIImage *image) {
             [self _shareWithData:aData image:image];
         }];
     }
@@ -168,7 +178,10 @@ RCT_EXPORT_METHOD(shareToWeibo:(NSDictionary *)aData
             body[@"errMsg"] = [self _getErrMsg:response.statusCode];
         }
     }
-    [self.bridge.eventDispatcher sendAppEventWithName:RCTWBEventName body:body];
+    
+    if (hasListeners) {
+        [self sendEventWithName:RCTWBEventName body:body];
+    }
 }
 
 #pragma mark - private
@@ -216,9 +229,6 @@ RCT_EXPORT_METHOD(shareToWeibo:(NSDictionary *)aData
         case WeiboSDKResponseStatusCodeUserCancelInstall:
             errMsg = @"用户取消安装微博客户端";
             break;
-        case WeiboSDKResponseStatusCodePayFail:
-            errMsg = @"支付失败";
-            break;
         case WeiboSDKResponseStatusCodeShareInSDKFailed:
             errMsg = @"分享失败";
             break;
@@ -251,14 +261,10 @@ RCT_EXPORT_METHOD(shareToWeibo:(NSDictionary *)aData
     }
     else {
         if ([type isEqualToString:RCTWBShareTypeVideo]) {
-            WBVideoObject *videoObject = [WBVideoObject new];
-            videoObject.videoUrl = aData[RCTWBShareWebpageUrl];
-            message.mediaObject = videoObject;
-        }
-        else if ([type isEqualToString:RCTWBShareTypeAudio]) {
-            WBMusicObject *musicObject = [WBMusicObject new];
-            musicObject.musicUrl = aData[RCTWBShareWebpageUrl];
-            message.mediaObject = musicObject;
+            WBNewVideoObject *videoObject = [WBNewVideoObject new];
+            NSURL *videoUrl = aData[RCTWBShareWebpageUrl];
+            [videoObject addVideo:videoUrl];
+            message.videoObject = videoObject;
         }
         else {
             WBWebpageObject *webpageObject = [WBWebpageObject new];
@@ -284,7 +290,10 @@ RCT_EXPORT_METHOD(shareToWeibo:(NSDictionary *)aData
         body[@"errMsg"] = INVOKE_FAILED;
         body[@"errCode"] = @(-1);
         body[@"type"] = @"WBSendMessageToWeiboResponse";
-        [_bridge.eventDispatcher sendAppEventWithName:RCTWBEventName body:body];
+        
+        if (hasListeners) {
+            [self sendEventWithName:RCTWBEventName body:body];
+        }
     }
 }
 
