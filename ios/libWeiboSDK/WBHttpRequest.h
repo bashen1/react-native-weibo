@@ -177,4 +177,17 @@ typedef void (^WBRequestHandler)(WBHttpRequest *httpRequest,
                                     queue:(NSOperationQueue*)queue
                     withCompletionHandler:(WBRequestHandler)handler;
 
+/**
+一般请求接口，主线程执行
+调用此接口后，将发送一个HTTP网络请求
+@param url 请求url地址
+@param httpMethod  支持"GET" "POST"
+@param params 向接口传递的参数结构
+@param handler 接口请求返回调用的block方法
+*/
++ (WBHttpRequest *)requestWithURL:(NSString *)url
+                       httpMethod:(NSString *)httpMethod
+                           params:(NSDictionary *)params
+            withCompletionHandler:(WBRequestHandler)handler;
+
 @end

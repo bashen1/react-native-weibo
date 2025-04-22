@@ -8,7 +8,9 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
+#import "WeiboSDK.h"
 
 @interface RCTWeiboAPI : RCTEventEmitter<RCTBridgeModule>
-
++ (void)didReceiveWeiboRequest:(WBBaseRequest *_Nullable)request;
++ (void)didReceiveWeiboResponse:(WBBaseResponse *_Nullable)response;
 @end

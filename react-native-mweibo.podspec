@@ -16,8 +16,10 @@ Pod::Spec.new do |s|
   s.resource      = "ios/libWeiboSDK/WeiboSDK.bundle"
   s.requires_arc  = true
   s.vendored_libraries = "ios/libWeiboSDK/libWeiboSDK.a"
-  
-  s.dependency "React"
+  s.resource_bundles = {
+    'libWeiboSDK' => ['ios/libWeiboSDK/PrivacyInfo.xcprivacy'],
+  }
+  s.dependency 'React-Core'
 
 end
 
