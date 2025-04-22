@@ -100,3 +100,9 @@ export function share(data) {
     checkData(data)
     return Promise.all([waitForResponse('WBSendMessageToWeiboResponse'), nativeSendMessageRequest(data)]).then(v=>v[0]);
 }
+
+export function initSDK(params = {}) {
+    if (Platform.OS === 'ios') {
+        WeiboAPI.initSDK(params ?? {});
+    }
+}
