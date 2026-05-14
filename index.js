@@ -4,7 +4,7 @@
 
 import {NativeModules, Platform, NativeEventEmitter, DeviceEventEmitter} from 'react-native';
 
-const {WeiboAPI} = NativeModules;
+const WeiboAPI = NativeModules.WeiboAPI || NativeModules.RCTWeiboAPI;
 
 // Used only with promisify. Transform callback to promise result.
 function translateError(err, result) {
