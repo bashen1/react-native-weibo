@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "WBHttpRequest.h"
+#import <WeiboSDK/WBHttpRequest.h>
 
 typedef NS_ENUM(NSInteger, WeiboSDKResponseStatusCode)
 {

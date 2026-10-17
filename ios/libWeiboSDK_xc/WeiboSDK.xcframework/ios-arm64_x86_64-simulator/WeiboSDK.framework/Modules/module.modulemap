@@ -1,0 +1,6 @@
+framework module WeiboSDK {
+  umbrella header "WeiboSDK.h"
+  export *
+
+  module * { export * }
+}
