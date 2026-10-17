@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.1.2
+
+- 集成XcFramework
+
 ## 5.1.1
 
 - 调整NativeModules导出
