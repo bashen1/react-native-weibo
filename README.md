@@ -25,7 +25,7 @@ npm install react-native-mweibo --save
 ```objective-c
 #import <RCTAppDelegate.h>
 #import <UIKit/UIKit.h>
-#import "WeiboSDK.h"
+#import <WeiboSDK/WeiboSDK.h>
 
 @interface AppDelegate: RCTAppDelegate <WeiboSDKDelegate>
 
