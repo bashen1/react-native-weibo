@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.1.3
+
+- 升级微博Android SDK至13.10.8
+
 ## 5.1.2
 
 - 集成XcFramework
