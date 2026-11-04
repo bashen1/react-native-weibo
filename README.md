@@ -4,7 +4,7 @@
 
 iOS version：3.4.0
 
-Android version：4.4.3
+Android version：13.10.8
 
 ## 如何安装
 
