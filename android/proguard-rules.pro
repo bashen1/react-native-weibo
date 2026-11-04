@@ -15,3 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+## 微博 SDK
+-keep public class com.sina.weibo.sdk.**{*;}
